@@ -1,0 +1,311 @@
+\documentclass[12pt,addpoints,answers]{exam}
+\usepackage[utf8]{inputenc}
+
+\unframedsolutions
+\renewcommand{\solutiontitle}{\noindent\textbf{Solution:}\par\noindent}
+\SolutionEmphasis{\color{blue}}
+\printanswers
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{xfrac}
+
+\usepackage{siunitx}
+\sisetup{parse-numbers=false}
+
+\usepackage{listings}
+\lstset{basicstyle=\scriptsize\ttfamily}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{chains}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart, calc, decorations.pathreplacing}
+%\tikzset{>=stealth',every on chain/.append style={join}, every join/.style={-,blue,thick,dashed}}
+
+
+\title{Computer Networks Homework 2}
+\author{Fall 2019}
+\date{Due: 24 February 2020}
+
+\begin{document}
+\maketitle
+
+\begin{questions}
+\question[6] List at least three responsibilities of the Transport Layer.
+\begin{solution}
+	The Transport Layer is responsible for the following:
+	\begin{enumerate}
+		\item Creating an end to end \textit{connection} between two hosts.
+		\item Controlling the flow of packets in a way that does not stress the two connected devices.
+		\item Ensuring a complete and verified data transfer in TCP based connections.
+	\end{enumerate}
+\end{solution}
+
+\question[5] A sequence of UDP packets addressed to ports 1979, 8854, 9000, 1979, and 9000 arrive at a host (in that order). Draw a simple diagram that shows how these packets enter the demux service and then how they are distributed to the processess.
+\begin{solution}
+	\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+	\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=2cm, minimum height=0.5cm, text centered, draw=black, fill=blue!30]
+	\tikzstyle{process} = [rectangle, minimum width=2cm, minimum height=0.5cm, text centered, draw=black, fill=orange!30]
+	\tikzstyle{decision} = [diamond, minimum width=2cm, minimum height=0.5cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{arrow} = [thick,->,>=stealth]
+	
+	% Begin Diagram
+\begin{tikzpicture}[node distance=2cm]
+	\node (start) [startstop, xshift=2cm] {Incoming connection from another host};
+	
+	% Start nodes
+	\node (multiplex) [process, below of=start, xshift=2cm] {Transport Layer Multiplexer};
+	\draw [arrow] (start) -- node[anchor=west, xshift=1cm] {[Packets: 1979, 8854, 9000, 1979, 9000]} (multiplex);
+	
+	% Multiplex
+	\node (proto) [io, below of=multiplex, xshift=2cm] {Input};
+	\draw [arrow] (multiplex) -- node[anchor=west, xshift=1cm] {[Packets: 1979, 8854, 9000, 1979, 9000]} (proto);
+	
+	% Protocols
+	\node (udp) [decision, below of=proto, xshift=-2cm] {UDP};
+	\draw [arrow] (proto) -- node[anchor=east,yshift=0.15cm] {UDP Protocol [Packets: 1979, 8854, 9000, 1979, 9000]} (udp);
+	\node (tcp) [decision, right of=udp, xshift=2cm] {TCP};
+	\draw [arrow] (proto) -- node[anchor=west,yshift=0.15cm] {TCP Protocol}(tcp);
+	
+	\node (tcpEnd) [io, below of=tcp] {Ports};
+	\draw [arrow] (tcp) -- node[anchor=west,xshift=0.1cm] {No packets come here}(tcpEnd);
+	
+	% UDP snapshot
+	\node (udpPorts) [io, below of=udp] {Ports};
+	\draw [arrow] (udp) -- (udpPorts);
+	
+	% Port Split
+	\node (udp1979) [decision, below of=udpPorts, xshift=-4cm] {1979};
+	\draw [arrow] (udpPorts) -- node[anchor=east,yshift=0.15cm] {Consume: 1979}(udp1979);
+	
+	\node (udp8854) [decision, below of=udpPorts] {8854};
+	\draw [arrow] (udpPorts) -- (udp8854);
+	
+	\node (udp9000) [decision, below of=udpPorts, xshift=4cm] {9000};
+	\draw [arrow] (udpPorts) -- (udp9000);
+	
+%%% Split 1
+	\draw (-5,-11) -- (13,-11);
+	
+	% UDP snapshot
+	\node (udpPorts1) [io, below of=udp8854] {Ports};
+	\node (udpPorts1Text) [right of=udpPorts1, anchor=west] {[Packets: 8854, 9000, 1979, 9000]};
+	
+	% Port Split
+	\node (udp1979a) [decision, below of=udpPorts1, xshift=-4cm] {1979};
+	\draw [arrow] (udpPorts1) -- (udp1979a);
+	
+	\node (udp8854a) [decision, below of=udpPorts1] {8854};
+	\draw [arrow] (udpPorts1) -- node[anchor=east,yshift=-0.15cm] {Consume: 8854}(udp8854a);
+	
+	\node (udp9000a) [decision, below of=udpPorts1, xshift=4cm] {9000};
+	\draw [arrow] (udpPorts1) -- (udp9000a);
+
+	\end{tikzpicture}
+	
+	\begin{tikzpicture}[node distance=2cm]
+	
+	%%% Split 2
+	\draw (-5,1) -- (13,1);
+	
+	% UDP snapshot
+	\node (udpPorts2) [io] {Ports};
+	\node (udpPorts2Text) [right of=udpPorts2, anchor=west] {[Packets: 9000, 1979, 9000]};
+	
+	% Port Split 
+	\node (udp1979b) [decision, below of=udpPorts2, xshift=-4cm] {1979};
+	\draw [arrow] (udpPorts2) -- (udp1979b);
+	
+	\node (udp8854b) [decision, below of=udpPorts2] {8854};
+	\draw [arrow] (udpPorts2) -- (udp8854b);
+	
+	\node (udp9000b) [decision, below of=udpPorts2, xshift=4cm] {9000};
+	\draw [arrow] (udpPorts2) -- node[anchor=west,yshift=0.15cm] {Consume: 9000}(udp9000b);
+	
+	%%% Split 3
+		\draw (-5,-3) -- (13,-3);
+	
+	% UDP snapshot
+	\node (udpPorts3) [io, below of=udp8854b] {Ports};
+	\node (udpPorts3Text) [right of=udpPorts3, anchor=west] {[Packets: 1979, 9000]};
+	
+	
+	% Port Split
+	\node (udp1979c) [decision, below of=udpPorts3, xshift=-4cm] {1979};
+	\draw [arrow] (udpPorts3) -- node[anchor=east,yshift=0.15cm] {Consume: 1979}(udp1979c);
+	
+	\node (udp8854c) [decision, below of=udpPorts3] {8854};
+	\draw [arrow] (udpPorts3) -- (udp8854c);
+	
+	\node (udp9000c) [decision, below of=udpPorts3, xshift=4cm] {9000};
+	\draw [arrow] (udpPorts3) -- (udp9000c);
+	
+	
+	
+	%%% Split 4
+		\draw (-5,-7.1) -- (13,-7.1);
+	
+	% UDP snapshot
+	\node (udpPorts4) [io, below of=udp8854c] {Ports};
+	\node (udpPorts4Text) [right of=udpPorts4, anchor=west] {[Packets: 9000]};
+	
+	
+	% Port Split
+	\node (udp1979d) [decision, below of=udpPorts4, xshift=-4cm] {1979};
+	\draw [arrow] (udpPorts4) -- (udp1979d);
+	
+	\node (udp8854d) [decision, below of=udpPorts4] {8854};
+	\draw [arrow] (udpPorts4) -- (udp8854d);
+	
+	\node (udp9000d) [decision, below of=udpPorts4, xshift=4cm] {9000};
+	\draw [arrow] (udpPorts4) -- node[anchor=west,yshift=0.15cm] {Consume: 9000}(udp9000d);
+	
+	% Programs
+		\draw (-5,-12) -- (13,-12);
+	\node (aggregatorText) [below of=udp8854d, yshift=-1cm] {All port consumptions directly map this way};
+	
+	\node (udp1979e) [decision, below of=aggregatorText, xshift=-4cm] {1979};
+	\node (programA) [process, below of=udp1979e] {Program A};
+	\draw [arrow] (udp1979e) -- node[anchor=west,yshift=0.15cm] {Packet x 2} (programA) ;
+
+	\node (udp8854e) [decision, below of=aggregatorText] {8854};
+	\node (programB) [process, below of=udp8854e] {Program B};
+	\draw [arrow] (udp8854e) -- node[anchor=west,yshift=0.15cm] {Packet x 1} (programB);
+
+	\node (udp9000e) [decision, below of=aggregatorText, xshift=4cm] {9000};
+	\node (programC) [process, below of=udp9000e] {Program C};
+	\draw [arrow] (udp9000e) -- node[anchor=west,yshift=0.15cm] {Packet x 2} (programC);
+	\end{tikzpicture}
+	
+
+\end{solution}
+
+
+
+\question[9] Use RFC1700 to find the well-known port numbers for the following services: SMTP, HTTP, Kerberos, POP3, BGP, WHOAMI, LDAP, and RPC (remote process execution). Be careful, RPC has multiple port assignments; list at least two and the associated application or algorithm.
+\begin{solution}
+	\begin{itemize}
+		\item SMTP:
+			\begin{itemize}
+				\item 25
+				\item 465
+				\item 587
+				\item 3535 (semi-common but unofficial)
+			\end{itemize}
+		\item HTTP: 
+			\begin{itemize}
+				\item 80
+				\item 443 (It's not exactly HTTP, but they're almost always paired)
+				\item 8080 (Mostly used for testing, but very common)
+				\\
+				\\
+				Many other services use HTTP as their program layer, but will not be listed (as there's hundreds)
+			\end{itemize}
+
+		\item Kerberos:
+			\begin{itemize}
+				\item 543 (Login)
+				\item 544 (Remote Shell)
+				\item 749 (Administration)
+				\item 750 (Version IV)
+				\item 751 (Master Authentication)
+				\item 752 (Password Server)
+				\item 753 (User Reg)
+				\item 754 (Slave Propagator)
+				\item 760 (Registration) 
+			\end{itemize}
+		\item POP3:
+			\begin{itemize}
+				\item 110
+				\item 995 (SSL/TLS)
+			\end{itemize}
+		\item BGP:
+			\begin{itemize}
+				\item 179
+			\end{itemize}
+		\item WHOAMI:
+			\begin{itemize}
+				\item 565
+				\item https://www.ietf.org/rfc/rfc1340.txt
+			\end{itemize}
+		\item LDAP:
+			\begin{itemize}
+				\item 389
+				\item 636
+				\item 3268 (Microsoft Active Directory LDAP)
+			\end{itemize}
+		\item RPC:
+			\begin{itemize}
+				\item 530 (generic)
+				\item 593 (HTTP RPC) (EX: Microsoft Mail Exchange)
+				\item 8069 (OpenERP - XML RPC) (EX: Odoo)
+			\end{itemize}
+	\end{itemize}
+\end{solution}
+
+\question[16] A UDP segment has the payload ``MTU!'' as a string of four ASCII charaacters. It is being delivered to an application on port 5272 from an application on port 8888. Show the full UDP header for this segment.
+
+Clearly mark each field with it's purpose and represent the value of each field in binary. Use an \SI{8}{b} representation for the ASCII characters (a convenient ASCII table is available at \url{www.asciitable.com}). Show all 1s Complement arthmetic for the checksum calculation, remembering that the checksum is based on 16-bit chunks. As a ``real'' checksum would require information from the IP packet you should just use the information from UDP and ignore the pseudoheader when calculating your checksum.
+\begin{solution}
+	UDP Datagram Header:
+	\begin{itemize}
+		\item Source Port: 0001010010011000
+		\item Destination Port: 0010001010111000
+		\item Length: 0000000000001100
+		\item Checksum: 1101100111010001
+	\end{itemize}
+\end{solution}
+
+\question[4] Find at least two other important UDP applications besides DHCP, DNS, and QUIC. Provide a citation which proves the application uses UDP.
+\begin{solution}
+	\begin{itemize}
+		\item TFTP:  https://tools.ietf.org/html/rfc1350
+		\item NFSv2: https://tools.ietf.org/html/rfc1094
+	\end{itemize}
+\end{solution}
+
+\question[8] List the two components of any protocol that adheres to the precepts of Automatic Repeat Requests. How do these two components work together to provide reliable delivery of packets?
+\begin{solution}
+\end{solution}
+
+\question[2] What problem is solved by adding a single-bit sequence number to packets using the Stop-and-Wait protocol?
+\begin{solution}
+\end{solution}
+
+\question[5] You are designing a protocol that uses the sliding window protocol. You have targeted a window size of 16 frames. What is the minimum number of bits needed in the header field for packets of this protocol?
+\begin{solution}
+\end{solution}
+
+\question[3] TCP uses a \SI{32}{b} sequence number. What is the maximum window size that could be used?
+\begin{solution}
+\end{solution}
+
+\question[12] Show the states the TCP state machine moves through in the following situations:
+\begin{parts}
+\part The client initiates a connection, then changes its mind with a \lstinline{close()} function.
+\part A standard closing of the connection from the \lstinline{Established} state by the client.
+\part The client initiates a new connection, but the server never responds.
+\end{parts}
+\begin{solution}
+\end{solution}
+
+\question[4] They may sound similar, but explain the differences between the \lstinline{PUSH} and the \lstinline{URGENT} flags in a TCP segment.
+\begin{solution}
+\end{solution}
+
+\question[6] Several segments are sent by a client containing \SI{852}{b}, \SI{777}{b}, and \SI{212}{b}. Prior to these transmissions, the last ACK received by the client was for sequence number \texttt{0x001109AB}. What are the sequence numbers and ACKs for these segments?
+\begin{solution}
+\end{solution}
+
+\question[10] A TCP host is using the original timeout equations and 10 packets arrive with the following RTT values: \SI{145}{\milli\second}, \SI{145}{\milli\second}, \SI{155}{\milli\second}, \SI{144}{\milli\second}, \SI{100}{\milli\second}, \SI{255}{\milli\second}, \SI{200}{\milli\second}, \SI{185}{\milli\second}, \SI{166}{\milli\second}, \SI{145}{\milli\second}. Show how the value of the value of $\mathrm{EstRTT}$ changes as each packet arrives. Start with a \SI{100}{\milli\second} value for $\mathrm{EstRTT}$.
+\begin{solution}
+\end{solution}
+
+\question[10] Repeat the previous question using the Jacobson/Karels equations. Let the important values be: $\mathrm{EstimatedRTT} = \SI{100}{\milli\second}$, $\mathrm{Deviation} = 0$, $\mu = 1$, $\gamma = 4$, $\delta = 0.875$.
+
+\end{questions}
+\end{document}
