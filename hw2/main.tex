@@ -10,6 +10,7 @@
 \usepackage{tabularx}
 \usepackage{url}
 \usepackage{xfrac}
+\usepackage{enumitem}
 
 \usepackage{siunitx}
 \sisetup{parse-numbers=false}
@@ -270,18 +271,41 @@ Clearly mark each field with it's purpose and represent the value of each field 
 
 \question[8] List the two components of any protocol that adheres to the precepts of Automatic Repeat Requests. How do these two components work together to provide reliable delivery of packets?
 \begin{solution}
+	Primary components:
+	\begin{enumerate}
+		\item Packet Acknowledgment
+		\item Timeouts
+		
+		These work together to create automatic repeating requests by sending a packet to a host, then waiting for a response back from the host acknowledging that it received the packet.  The timeout is there to ensure that the system does not wait forever for an acknowledgment, as it may never come due to a myriad of issues such as packet drops.
+		
+		When the acknowledgment occurs the system knows it is safe to move onto the next packet/s.  In the other case where a timeout occurs, the system will know to resend the packets as they have not gotten to their destination in a reasonable amount of time.
+	\end{enumerate}
 \end{solution}
 
 \question[2] What problem is solved by adding a single-bit sequence number to packets using the Stop-and-Wait protocol?
 \begin{solution}
+	This solves the issue of knowing whether or not a packet was double received or if two packets contain the same set of data in a window.  This works by numbering each packet with the single bit sequence and the ACK response also contains that number.  Allowing a much more accurate idea of what all data has been successfully sent and received.
 \end{solution}
 
 \question[5] You are designing a protocol that uses the sliding window protocol. You have targeted a window size of 16 frames. What is the minimum number of bits needed in the header field for packets of this protocol?
 \begin{solution}
+	Window size $=> 2^N = Size$
+	
+	$2^N = 16$
+	
+	$N = \sqrt{16}$
+	
+	N = 4
 \end{solution}
 
 \question[3] TCP uses a \SI{32}{b} sequence number. What is the maximum window size that could be used?
 \begin{solution}
+	By raw \SI{32}{b}
+	$2 ^ (32) = 4294967296$.
+	
+	However, the RFC explicitly says the maximum is $2^16 = 65536$.
+	
+	https://www.ietf.org/rfc/rfc1323.txt
 \end{solution}
 
 \question[12] Show the states the TCP state machine moves through in the following situations:
@@ -291,21 +315,71 @@ Clearly mark each field with it's purpose and represent the value of each field 
 \part The client initiates a new connection, but the server never responds.
 \end{parts}
 \begin{solution}
+	\begin{enumerate}[label=\Alph*]
+		\item 
+			Start $->$ Allocate/Bind Socket $->$ Initiate connection $->$ Close connection $->$ clear Socket $->$ End Process
+		\item 
+			Start $->$ Allocate/Bind Socket $->$ Initiate connection $->$ Send Initiation Packet SYN $->$ Receive ACK $->$ connection established $->$ close command $->$ Send FIN Packet $->$ Wait for ACK $->$ Close connection $->$ clear Socket $->$ End Process
+		\item 
+			Start $->$ Allocate/Bind Socket $->$ Initiate connection $->$ Send Initiation Packet SYN  $->$ Repeat previous until timeout $->$ clear Socket $->$ End Process
+	\end{enumerate}
 \end{solution}
 
 \question[4] They may sound similar, but explain the differences between the \lstinline{PUSH} and the \lstinline{URGENT} flags in a TCP segment.
 \begin{solution}
+	PUSH forces the buffered bytes to be sent along the line immediately, where they will be received and queued on the receiving host.  Where URGENT is different, is it will be received into a special URGENT queue in which it will be available immediately and without touching the main buffer.
 \end{solution}
 
 \question[6] Several segments are sent by a client containing \SI{852}{b}, \SI{777}{b}, and \SI{212}{b}. Prior to these transmissions, the last ACK received by the client was for sequence number \texttt{0x001109AB}. What are the sequence numbers and ACKs for these segments?
 \begin{solution}
+	\begin{itemize}
+		\item 852 b $=>$ 0x110cff
+		\item 777 b $=>$ 0x111008
+		\item 212 b $=>$ 0x1110dc
+	\end{itemize}
 \end{solution}
 
 \question[10] A TCP host is using the original timeout equations and 10 packets arrive with the following RTT values: \SI{145}{\milli\second}, \SI{145}{\milli\second}, \SI{155}{\milli\second}, \SI{144}{\milli\second}, \SI{100}{\milli\second}, \SI{255}{\milli\second}, \SI{200}{\milli\second}, \SI{185}{\milli\second}, \SI{166}{\milli\second}, \SI{145}{\milli\second}. Show how the value of the value of $\mathrm{EstRTT}$ changes as each packet arrives. Start with a \SI{100}{\milli\second} value for $\mathrm{EstRTT}$.
 \begin{solution}
+	Original Timeout Equation: $RTO = Rb$
+	
+	Where: $ R = RTT$ and $b =$ delay variance, recommended to be static $2$
+	\begin{enumerate}
+		\item 145ms:  Fail, with EstRTT 100 $ -> $ EstRTT = 200
+		\item 145ms:  Success, with EstRTT 200 $ -> $ EstRTT = 100
+		\item 155ms:  Fail, with EstRTT 100 $ -> $ EstRTT = 200
+		\item 144ms:  Success, with EstRTT 200 $ -> $ EstRTT = 100
+		\item 155ms:  Fail, with EstRTT 100 $ -> $ EstRTT = 200
+		\item 100ms:  Success, with EstRTT 200 $ -> $ EstRTT = 100
+		\item 255ms:  Fail, with EstRTT 100 $ -> $ EstRTT = 200
+		\item 200ms:  Success, with EstRTT 200 $ -> $ EstRTT = 100
+ 		\item 185ms:  Fail, with EstRTT 100 $ -> $ EstRTT = 200
+ 		\item 166ms:  Success, with EstRTT 200 $ -> $ EstRTT = 100
+		\item 145ms:  Fail, with EstRTT 100 $ -> $ EstRTT = 200
+	\end{enumerate}
 \end{solution}
 
 \question[10] Repeat the previous question using the Jacobson/Karels equations. Let the important values be: $\mathrm{EstimatedRTT} = \SI{100}{\milli\second}$, $\mathrm{Deviation} = 0$, $\mu = 1$, $\gamma = 4$, $\delta = 0.875$.
+\begin{solution}
+	\begin{center}
+		${\displaystyle \mathrm {RTT} =\alpha \cdot \mathrm {old\_RTT} +(1-\alpha )\cdot \mathrm {new\_round\_trip\_sample} }$
+	\end{center}
+	
+	\begin{enumerate}
+		\item 145ms:   $->$ estimateRTT = 139ms
+		\item 145ms:   $->$ estimateRTT = 144ms
+		\item 155ms:   $->$ estimateRTT = 153ms
+		\item 144ms:   $->$ estimateRTT = 145ms
+		\item 155ms:   $->$ estimateRTT = 153ms
+		\item 100ms:   $->$ estimateRTT = 106ms
+		\item 255ms:   $->$ estimateRTT = 235ms
+		\item 200ms:   $->$ estimateRTT = 206ms
+		\item 185ms:   $->$ estimateRTT = 186ms
+		\item 166ms:   $->$ estimateRTT = 168ms
+		\item 145ms:   $->$ estimateRTT = 147ms
+	\end{enumerate}
+	
+\end{solution}
 
 \end{questions}
 \end{document}
