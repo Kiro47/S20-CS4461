@@ -1,0 +1,72 @@
+\documentclass[12pt,addpoints,answers]{exam}
+\usepackage[utf8]{inputenc}
+
+\unframedsolutions
+\renewcommand{\solutiontitle}{\noindent\textbf{Solution:}\par\noindent}
+\SolutionEmphasis{\color{blue}}
+%\noprintanswers
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{xfrac}
+
+\usepackage{siunitx}
+\sisetup{parse-numbers=false}
+
+\usepackage{listings}
+\lstset{basicstyle=\scriptsize\ttfamily}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{chains}
+\usetikzlibrary{positioning}
+%\tikzset{>=stealth',every on chain/.append style={join}, every join/.style={-,blue,thick,dashed}}
+
+
+
+\title{Computer Networks Homework 3}
+\author{Spring 2020}
+\date{Due: 16 March 2020}
+
+\begin{document}
+\maketitle
+
+\begin{questions}
+\question[10] Jain's Fairness Index allows us to calculate how fair the allocation of bandwidth is between multiple flows. Let there be 20 flows entering a router as shown below. What is the fairness index for this set of flows?
+\begin{center}
+\begin{tabularx}{0.7\linewidth}{>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\SI{889}{Kbps} & \SI{393}{Kbps} & \SI{516}{Kbps} & \SI{723}{Kbps} \\
+\SI{548}{Kbps} &  \SI{86}{Kbps} & \SI{906}{Kbps} & \SI{184}{Kbps} \\
+\SI{204}{Kbps} & \SI{520}{Kbps} & \SI{973}{Kbps} & \SI{510}{Kbps} \\
+\SI{921}{Kbps} &  \SI{59}{Kbps} & \SI{505}{Kbps} & \SI{705}{Kbps} \\
+\SI{842}{Kbps} & \SI{542}{Kbps} & \SI{770}{Kbps} & \SI{671}{Kbps} \\
+\end{tabularx}
+\end{center}
+\begin{solution}
+\end{solution}
+
+\question[10] Design two distinct and different sets of 5 flows such that each set of flows has a 0.5 fairness index. What conclusion can you draw about fairness?
+\begin{solution}
+\end{solution}
+
+\question[5] When presenting a Random Early Drop (RED) problem, some textbooks will only tell the student that the average length of the queue is halfway between $\mathrm{MaxThreshold}$ and $\mathrm{MinThreshold}$. No numeric values will be provided for any of these numbers. Show how knowing this average queue length and a numeric value for $\mathrm{MaxProb}$ is enough to calculate a value for $\bar{p}$.
+\begin{solution}
+\end{solution}
+
+\question Using your answer above, let there be a router implementing RED with $\mathrm{MaxProb} = 0.02$.
+\begin{parts}
+\part[5] Calculate the drop probabilities ($p$) for $\mathrm{Count} = 1$ and $\mathrm{Count} = 100$.
+\part[5] Calculate the probability that packets are \textbf{not dropped} for $\mathrm{Count} = 1$ and $\mathrm{Count} = 100$.
+\part[5] Calculate the probability that none of the first 50 packets are dropped.\\\emph{Hint: the probability that the first 2 packets are not dropped is the probability that the first packet ($\mathit{Count} = 1$) is not dropped times the probability that the second packet ($\mathit{Count} = 2$) is not dropped}.
+\end{parts}
+\begin{solution}
+\end{solution}
+
+\question[10] A TCP host is transmitting over a network with an MSS of \SI{1460}{B}. Assuming it is operating in standard AIMD mode (and not slow start), that the initial congestion window is at \SI{11860}{B}, and that no segments are lost. How many segments need to be successfully ACKed before the window reaches \SI{20000}{B}?\\\emph{Hint: you'll likely want to write a program/script to calculate the partial MSS updates.}
+\begin{solution}
+\end{solution}
+
+\end{questions}
+\end{document}
