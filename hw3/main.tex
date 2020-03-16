@@ -71,7 +71,7 @@ def p1JaneDec(flows):
 	$$
 	\frac
 	{
-		(@{S('Sum(Symbol("f"),(i,1,20))')})^2 
+		(@{S('Sum(Symbol("f"),(i,1,20))')})^2
 	}
 	{
 		n @{S('Sum(Symbol("f^2"),(i,1,20))')}
@@ -85,7 +85,7 @@ def p1JaneDec(flows):
 		@{p1FlowNumber * p1JaneDec(p1Flows)}
 	}
 		=
-	@{(sum(p1Flows) ** 2) / (p1FlowNumber * p1JaneDec(p1Flows))} 
+	@{(sum(p1Flows) ** 2) / (p1FlowNumber * p1JaneDec(p1Flows))}
 	$$
 
 \end{solution}
@@ -102,7 +102,7 @@ Flow Set 1:
 	$$
 	\frac
 	{
-		(@{S('Sum(Symbol("f"),(i,1,5))')})^2 
+		(@{S('Sum(Symbol("f"),(i,1,5))')})^2
 	}
 	{
 		n @{S('Sum(Symbol("f^2"),(i,1,5))')}
@@ -116,7 +116,7 @@ Flow Set 1:
 		@{p2FlowNumber1 * p1JaneDec(p2Flows1)}
 	}
 		=
-	@{(sum(p2Flows1) ** 2) / (p2FlowNumber1 * p1JaneDec(p2Flows1))} 
+	@{(sum(p2Flows1) ** 2) / (p2FlowNumber1 * p1JaneDec(p2Flows1))}
 		\approx
 	@{round((sum(p2Flows1) ** 2) / (p2FlowNumber1 * p1JaneDec(p2Flows1)),2)}
 	$$
@@ -131,7 +131,7 @@ $$@{p2Flows2}$$
 	$$
 	\frac
 	{
-		(@{S('Sum(Symbol("f"),(i,1,5))')})^2 
+		(@{S('Sum(Symbol("f"),(i,1,5))')})^2
 	}
 	{
 		n @{S('Sum(Symbol("f^2"),(i,1,5))')}
@@ -145,7 +145,7 @@ $$@{p2Flows2}$$
 		@{p2FlowNumber2 * p1JaneDec(p2Flows2)}
 	}
 		=
-	@{(sum(p2Flows2) ** 2) / (p2FlowNumber2 * p1JaneDec(p2Flows2))} 
+	@{(sum(p2Flows2) ** 2) / (p2FlowNumber2 * p1JaneDec(p2Flows2))}
 	\approx
 	@{round((sum(p2Flows2) ** 2) / (p2FlowNumber2 * p1JaneDec(p2Flows2)),2)}
 $$
@@ -160,12 +160,12 @@ Conclusion:
 	\begin{center}
 	$\bar{p}=$ MaxProb $. \frac{\text { AvgLength - MinThreshold }}{\text { MaxThreshold }-\text { Min Threshold }}$
 	\end{center}
-	If we are given the $MaxThreshold$ and $MinThreshold$ we may estimate the average queue Length ($AvgLength$) to be halfway between the $MinThreshold$ an $MaxThreshold$ which results in the following:  
+	If we are given the $MaxThreshold$ and $MinThreshold$ we may estimate the average queue Length ($AvgLength$) to be halfway between the $MinThreshold$ an $MaxThreshold$ which results in the following:
 	\begin{equation}
 		AvgLength = \frac{MaxThreshold + MinThreshold}{2}
 	\end{equation}
 	With this and the given $MaxProb$ we can easily use the above formula to find $\bar{p}$.
-	
+
 \end{solution}
 
 \question Using your answer above, let there be a router implementing RED with $\mathrm{MaxProb} = 0.02$.
@@ -175,18 +175,75 @@ Conclusion:
 \part[5] Calculate the probability that none of the first 50 packets are dropped.\\\emph{Hint: the probability that the first 2 packets are not dropped is the probability that the first packet ($\mathit{Count} = 1$) is not dropped times the probability that the second packet ($\mathit{Count} = 2$) is not dropped}.
 \end{parts}
 \begin{solution}
+Simplificaiton:
+    \begin{center}
+	$\bar{p}=$ MaxProb $. \frac{\text { AvgLength - MinThreshold }}{\text { MaxThreshold }-\text { Min Threshold }}$
+
+    =
+
+    $\bar{p}=$ MaxProb $. \frac{(\frac{MaxThreshold + MinThreshold}{2}) \text { - MinThreshold }}{\text { MaxThreshold }-\text { Min Threshold }}$
+
+    =
+
+    $- \frac{1}{2}$
+	\end{center}
+Calculating p:
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+	language=Python,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=4
+}
+\begin{lstlisting}
+max_prob = 0.02
+p_bar= max_prob * -0.5
+for count in range(1,101):
+     val = p_bar/(1 - count * (p_bar))
+     print(f"Count[{count}]: {val}")
+\end{lstlisting}
+
 \begin{parts}
 	\part
-		Part A
+        Using the above formula the drop probably when $\mathrm{Count} = 1$ is $-0.01$
 	\part
-		Part B
+        Using the above formula the drop probably when $\mathrm{Count} = 100$ is $-0.005$
 	\part
-		Part C
+    Script:
+\begin{lstlisting}
+total_prob=0
+for count in range(1,51):
+    val = p_bar/(1 - count * (p_bar))
+    if count == 1:
+        total_prob=val
+    else:
+        total_prob = total_prob * val
+    print(f"Count[{count}]: {val}")
+    print(f"Current probability: {total_prob}")
+print("Final probability of not dropping: {}".format(1.0 - total_prob))
+\end{lstlisting}
+    This results in the final probability of dropping to be $1.6334665437398676^{105}$.
+    When we calculate the probability of it dropping it is $1 - 1.6334665437398676^{-105}$, which becomes:
+	\begin{equation}
+        1 - 1.6334665437398676^{-105} \approx 1
+	\end{equation}
 \end{parts}
 \end{solution}
 
 \question[10] A TCP host is transmitting over a network with an MSS of \SI{1460}{B}. Assuming it is operating in standard AIMD mode (and not slow start), that the initial congestion window is at \SI{11860}{B}, and that no segments are lost. How many segments need to be successfully ACKed before the window reaches \SI{20000}{B}?\\\emph{Hint: you'll likely want to write a program/script to calculate the partial MSS updates.}
-\begin{solution}	
+\begin{solution}
 	\definecolor{dkgreen}{rgb}{0,0.6,0}
 	\definecolor{gray}{rgb}{0.5,0.5,0.5}
 	\definecolor{mauve}{rgb}{0.58,0,0.82}
@@ -206,18 +263,25 @@ Conclusion:
 		breakatwhitespace=true,
 		tabsize=4
 	}
+    Congestion Window incrementation:
+    \begin{equation}
+        \mathrm{Increment} = \mathrm{MSS} * \frac{\mathrm{MSS}}{\mathrm{CongestionWindow}}
+    \end{equation}
+
 	Used code to calculate packet window:
 	\begin{lstlisting}
-		mss=1460
-		cong_window=11860
-		max_window=20000
-		packet=0 
-		
+		mss = 1460
+		cong_window = 11860
+		max_window = 20000
+		packet=0
+
 		while True:
 		    if cong_window < max_window:
-		        packet+=1
-		        cong_window+=mss
-		        print(f"Packet[{packet}]: Window Size:[{cong_window}]")
+		        packet += 1
+                increment = mss * (mss / cong_window)
+		        cong_window += increment
+			    if packet \% 5 == 0:
+                    print(f"Packet[{packet}]: Window Size:[{cong_window}]")
 		    else:
 		        print(f"Packet[{packet}]: Window Size:[{cong_window}].  Broke Max[{max_window}]")
 		        break
@@ -230,20 +294,22 @@ def aimd(cong_window, max_window, mss):
 	while True:
 		if cong_window < max_window:
 			packet+=1
-			cong_window+=mss
-			retString += f"\\texttt{{Packet[{packet}]: Window Size:[{cong_window}]}}\\\\"
+			increment=(mss * (mss / cong_window))
+			cong_window += increment
+			if packet % 5 == 0:
+				retString += f"\\texttt{{Packet[{packet}]: Window Size:[{cong_window}]}}\\\\"
 		else:
 			retString +=f"\\texttt{{Packet[{packet}]: Window Size:[{cong_window}].  Broke Max[{max_window}]}}\\\\"
-			break	
+			break
 	return retString
-}}}	
+}}}
 $$
 \begin{equation}
 	\begin{split}
 	@{aimd(11860,20000,1460)}
 	\end{split}
 \end{equation}
-	
+
 \end{solution}
 \end{questions}
 
