@@ -24,6 +24,12 @@
 \usetikzlibrary{positioning}
 %\tikzset{>=stealth',every on chain/.append style={join}, every join/.style={-,blue,thick,dashed}}
 
+% Used for code embed in problem 5
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+
+% Run with: python3 -u -m pyptex main.tex
 
 
 \title{Computer Networks Homework 3}
@@ -45,14 +51,121 @@
 \end{tabularx}
 \end{center}
 \begin{solution}
+	Jain's Fairness Index:
+	\begin{equation}
+		f\left(x_{1}, x_{2}, \ldots, x_{n}\right)=\frac{\left(\sum_{i=1}^{n} x_{i}\right)^{2}}{n \sum_{i=1}^{n} x_{i}^{2}}
+	\end{equation}
+@{from sympy import *}
+@{p1Flows = [889,548,204,921,842,393,86,520,59,542,516,906,973,505,770,723,184,510,705,671]}
+@{p1FlowNumber = len(p1Flows)}
+@{{{
+def p1JaneDec(flows):
+	val = 0
+	for flow in flows:
+		val += flow**2
+	return val
+}}}
+	\begin{center}
+		Fairness Index:
+	\end{center}
+	$$
+	\frac
+	{
+		(@{S('Sum(Symbol("f"),(i,1,20))')})^2 
+	}
+	{
+		n @{S('Sum(Symbol("f^2"),(i,1,20))')}
+	}
+		=
+	\frac
+	{
+		@{sum(p1Flows) ** 2}
+	}
+	{
+		@{p1FlowNumber * p1JaneDec(p1Flows)}
+	}
+		=
+	@{(sum(p1Flows) ** 2) / (p1FlowNumber * p1JaneDec(p1Flows))} 
+	$$
+
 \end{solution}
 
 \question[10] Design two distinct and different sets of 5 flows such that each set of flows has a 0.5 fairness index. What conclusion can you draw about fairness?
 \begin{solution}
+@{p2Flows1 = [975,150,150,150,200]}
+@{p2FlowNumber1 = len(p2Flows1)}
+Flow Set 1:
+\begin{center}
+	Fairness Index:
+\end{center}
+	$$@{p2Flows1}$$
+	$$
+	\frac
+	{
+		(@{S('Sum(Symbol("f"),(i,1,5))')})^2 
+	}
+	{
+		n @{S('Sum(Symbol("f^2"),(i,1,5))')}
+	}
+		=
+	\frac
+	{
+		@{sum(p2Flows1) ** 2}
+	}
+	{
+		@{p2FlowNumber1 * p1JaneDec(p2Flows1)}
+	}
+		=
+	@{(sum(p2Flows1) ** 2) / (p2FlowNumber1 * p1JaneDec(p2Flows1))} 
+		\approx
+	@{round((sum(p2Flows1) ** 2) / (p2FlowNumber1 * p1JaneDec(p2Flows1)),2)}
+	$$
+
+@{p2Flows2 = [50,600,50,600,50]}
+@{p2FlowNumber2 = len(p2Flows2)}
+Flow Set 2:
+\begin{center}
+	Fairness Index:
+\end{center}
+$$@{p2Flows2}$$
+	$$
+	\frac
+	{
+		(@{S('Sum(Symbol("f"),(i,1,5))')})^2 
+	}
+	{
+		n @{S('Sum(Symbol("f^2"),(i,1,5))')}
+	}
+		=
+	\frac
+	{
+		@{sum(p2Flows2) ** 2}
+	}
+	{
+		@{p2FlowNumber2 * p1JaneDec(p2Flows2)}
+	}
+		=
+	@{(sum(p2Flows2) ** 2) / (p2FlowNumber2 * p1JaneDec(p2Flows2))} 
+	\approx
+	@{round((sum(p2Flows2) ** 2) / (p2FlowNumber2 * p1JaneDec(p2Flows2)),2)}
+$$
+Conclusion:
+
+\quad\quad Fairness is not exactly fair in the common sense terminology as you can maintain the same fairness with large variations of flows.  In Flow Set 1, we have one flow which a large amount of bandwidth while the other four flows have very small amounts of bandwidth.  Then in Flow Set 2 we have two higher flows and 3 lower flows.  However, the range difference on these is much smaller than from Flow Set 1.  This also allows us to conclude that the fairness index is not easily manipulable from one channel.
 \end{solution}
 
 \question[5] When presenting a Random Early Drop (RED) problem, some textbooks will only tell the student that the average length of the queue is halfway between $\mathrm{MaxThreshold}$ and $\mathrm{MinThreshold}$. No numeric values will be provided for any of these numbers. Show how knowing this average queue length and a numeric value for $\mathrm{MaxProb}$ is enough to calculate a value for $\bar{p}$.
 \begin{solution}
+	RED Algorithm for $\bar{p}$:
+	\begin{center}
+	$\bar{p}=$ MaxProb $. \frac{\text { AvgLength - MinThreshold }}{\text { MaxThreshold }-\text { Min Threshold }}$
+	\end{center}
+	If we are given the $MaxThreshold$ and $MinThreshold$ we may estimate the average queue Length ($AvgLength$) to be halfway between the $MinThreshold$ an $MaxThreshold$ which results in the following:  
+	\begin{equation}
+		AvgLength = \frac{MaxThreshold + MinThreshold}{2}
+	\end{equation}
+	With this and the given $MaxProb$ we can easily use the above formula to find $\bar{p}$.
+	
 \end{solution}
 
 \question Using your answer above, let there be a router implementing RED with $\mathrm{MaxProb} = 0.02$.
@@ -62,11 +175,76 @@
 \part[5] Calculate the probability that none of the first 50 packets are dropped.\\\emph{Hint: the probability that the first 2 packets are not dropped is the probability that the first packet ($\mathit{Count} = 1$) is not dropped times the probability that the second packet ($\mathit{Count} = 2$) is not dropped}.
 \end{parts}
 \begin{solution}
+\begin{parts}
+	\part
+		Part A
+	\part
+		Part B
+	\part
+		Part C
+\end{parts}
 \end{solution}
 
 \question[10] A TCP host is transmitting over a network with an MSS of \SI{1460}{B}. Assuming it is operating in standard AIMD mode (and not slow start), that the initial congestion window is at \SI{11860}{B}, and that no segments are lost. How many segments need to be successfully ACKed before the window reaches \SI{20000}{B}?\\\emph{Hint: you'll likely want to write a program/script to calculate the partial MSS updates.}
-\begin{solution}
+\begin{solution}	
+	\definecolor{dkgreen}{rgb}{0,0.6,0}
+	\definecolor{gray}{rgb}{0.5,0.5,0.5}
+	\definecolor{mauve}{rgb}{0.58,0,0.82}
+	\lstset{frame=tb,
+		language=Python,
+		aboveskip=3mm,
+		belowskip=3mm,
+		showstringspaces=false,
+		columns=flexible,
+		basicstyle={\small\ttfamily},
+		numbers=none,
+		numberstyle=\tiny\color{gray},
+		keywordstyle=\color{blue},
+		commentstyle=\color{dkgreen},
+		stringstyle=\color{mauve},
+		breaklines=true,
+		breakatwhitespace=true,
+		tabsize=4
+	}
+	Used code to calculate packet window:
+	\begin{lstlisting}
+		mss=1460
+		cong_window=11860
+		max_window=20000
+		packet=0 
+		
+		while True:
+		    if cong_window < max_window:
+		        packet+=1
+		        cong_window+=mss
+		        print(f"Packet[{packet}]: Window Size:[{cong_window}]")
+		    else:
+		        print(f"Packet[{packet}]: Window Size:[{cong_window}].  Broke Max[{max_window}]")
+		        break
+	\end{lstlisting}
+	Resulting in:
+$$@{{{
+def aimd(cong_window, max_window, mss):
+	packet = 0
+	retString = ""
+	while True:
+		if cong_window < max_window:
+			packet+=1
+			cong_window+=mss
+			retString += f"\\texttt{{Packet[{packet}]: Window Size:[{cong_window}]}}\\\\"
+		else:
+			retString +=f"\\texttt{{Packet[{packet}]: Window Size:[{cong_window}].  Broke Max[{max_window}]}}\\\\"
+			break	
+	return retString
+}}}	
+$$
+\begin{equation}
+	\begin{split}
+	@{aimd(11860,20000,1460)}
+	\end{split}
+\end{equation}
+	
 \end{solution}
-
 \end{questions}
+
 \end{document}
