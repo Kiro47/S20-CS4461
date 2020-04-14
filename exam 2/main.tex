@@ -42,6 +42,8 @@
 \usepackage{multirow}
 \usepackage{booktabs}
 
+% Float fix
+\usepackage{float}
 
 
 \tikzset{
@@ -255,7 +257,7 @@ Since we can say that the inverse is of the approximation is true from the calcu
 	\end{itemize}
 \end{solution}
 
-
+\newpage
 \question[10] A router implementing Fair Queuing is busy transmitting a packet when three flows deliver the following packets at approximated the same time, in the order given. Show how these packets will be scheduled for transmission.
 \begin{center}
 \begin{tabular}{lccccc}
@@ -267,8 +269,26 @@ Since we can say that the inverse is of the approximation is true from the calcu
 \end{tabular}
 \end{center}
 \begin{solution}[2.5in]
-	TODO:
+\begin{center}
+	\begin{table}[H]
+		\centering
+		\caption{Solution 5}
+		\label{Table 1}
+		\begin{tabular}{|c|cccc}
+			\hline
+			Packet & \multicolumn{1}{c|}{Arrival} & \multicolumn{1}{c|}{Length} & \multicolumn{1}{c|}{Finish} & \multicolumn{1}{c|}{Output} \\ \hline
+			1 & 0 & 45 & 45  & 1 \\ \cline{1-1}
+			2 & 0 & 45 & 255 & 5 \\ \cline{1-1}
+			3 & 0 & 75 & 120 & 2 \\ \cline{1-1}
+			4 & 0 & 15 & 210 & 4 \\ \cline{1-1}
+			5 & 0 & 75 & 195 & 3 \\ \cline{1-1}
+		\end{tabular}
+	\end{table}
+\end{center}
 \end{solution}
+
+
+\newpage
 
 \question Shown below is a small CIDR routing table.
 \begin{center}
@@ -306,32 +326,105 @@ Indicate which entry matches the following IP addresses.
 \question[10] Shown below is a network to be switched. Show the complete forwarding table for switch 2 (include all hosts).
 \begin{center}\includegraphics[width=0.9\linewidth]{fig/switches.png}\end{center}
 \begin{solution}[5in]
-
+	\begin{table}[H]
+		\centering
+		\caption{Solution 7}
+		\label{Table 1}
+		\begin{tabular}{|c|c|}
+			\hline
+			\multicolumn{2}{|c|}{Switch \#2}      \\ \hline
+			Destination Label & Destination Port \\ \hline
+			Switch 3          & 1                \\
+			Switch 1          & 2                \\
+			Host Z            & 3                \\
+			Host Y            & 4                \\
+			Host A            & 5                \\ \hline
+		\end{tabular}
+	\end{table}
 \end{solution}
-\begin{table}[]
-	\centering
-	\caption{Solution 7}
-	\label{Table 1}
-	\begin{tabular}{|c|c|}
-		\hline
-		\multicolumn{2}{|c|}{Switch \#2}      \\ \hline
-		Destination Label & Destination Port \\ \hline
-		Switch 3          & 1                \\
-		Switch 1          & 2                \\
-		Host Z            & 3                \\
-		Host Y            & 4                \\
-		Host A            & 5                \\ \hline
-	\end{tabular}
-\end{table}
 
-\newpage
 
 \question[12] A host launches three IP datagrams that have payloads of \SI{1280}{bytes}, \SI{1280}{bytes} and \SI{394}{bytes}. The MTU of the directly attached network is \SI{1460}{bytes}, but the destination host's network has an MTU of \SI{576}{bytes} (the ``minimum MTU'' supported by IP). Assume that these are the only two networks the datagrams must pass through. Indicate how each packet will be fragmented and specify for each fragment the size of each fragment's payload, the status of the ``more'' bit, and the value of the Offset field.
 \begin{solution}[3in]
-\end{solution}
+	To Switch from Host:(1460)
+	\begin{enumerate}	
+		\item Packet 1: 
+		\begin{enumerate}
+			\item Size: 1280 + 20 bytes for IP Header
+			\item Fragment Offset: 0
+			\item Flags: 0b000
+		\end{enumerate}
+		\item Packet 2: 
+		\begin{enumerate}
+			\item Size: 1280 + 20 bytes for IP Header
+			\item Fragment Offset: 0
+			\item Flags: 0b000
+		\end{enumerate}
+		\item Packet 3:
+		\begin{enumerate}
+			\item Size: 394 + 20 bytes for IP Header
+			\item Fragment Offset: 0
+			\item Flags: 0b000
+		\end{enumerate}
+	\end{enumerate}
+	
+	To Host from Switch: (576)
+	\begin{enumerate}	
+		\item Packet 1: 
+		\begin{enumerate}
+			\item Size: 556 + 20 bytes for IP Header
+			\item Offset: 0
+			\item Flags: 0b001
+		\end{enumerate}
+		\item Packet 2: 
+		\begin{enumerate}
+			\item Size: 556 + 20 bytes for IP Header
+			\item Offset: 556
+			\item Flags: 0b001
+		\end{enumerate}
+		\item Packet 3:
+		\begin{enumerate}
+			\item Size: 168 + 20 bytes for IP Header
+			\item Offset: 1112
+			\item Flags: 0b000
+		\end{enumerate}
+			\item Packet 4: 
+		\begin{enumerate}
+			\item Size: 556 + 20 bytes for IP Header
+			\item Offset: 0
+			\item Flags: 0b001
+		\end{enumerate}
+		\item Packet 5: 
+		\begin{enumerate}
+			\item Size: 556 + 20 bytes for IP Header
+			\item Offset: 556
+			\item Flags: 0b001
+		\end{enumerate}
+		\item Packet 6:
+		\begin{enumerate}
+			\item Size: 168 + 20 bytes for IP Header
+			\item Offset: 1112
+			\item Flags: 0b000
+		\end{enumerate}
+		\item Packet 7:
+		\begin{enumerate}
+			\item Size: 394 + 20 bytes for IP Header
+			\item Offset: 0
+			\item Flags: 0b000
+		\end{enumerate}
+	\end{enumerate}
 
+\end{solution}
+\newpage
 \question[10] A device joins a network for the first time. Which sequence of messages is more logical from that device: a DHCP request followed by an ARP request, or an ARP request followed by a DHCP request? \textbf{Justify your answer.}
 \begin{solution}[3in]
+	First DHCP requests happen, then an ARP request happens.
+	
+	In the initial DHCP request (after the offer) the sender is to send back their MAC address so they the DHCP server knows what to do with it and what IP to assign (whether it can randomly assign one or the DHCP server has a static rule for said MAC).
+	
+	After the DHCP server receives this request it then checks to see if the given MAC is already assigned anywhere in it's ARP tables.  If not, it is free to carry on with what it was deciding to do, otherwise the DHCP server (may) ignore the request and assume it is a duplicate.  An acknowledgment is then sent back to the client, and the ARP entry is assigned.
+	
+	The client then will receive their new IP and submit an ARP request to verify it's newly assigned connection.  Often times after this verification completion, the client also sends another global ARP broadcast to let everyone on the network to know the host now exists. 
 \end{solution}
 
 
@@ -355,15 +448,229 @@ F  & 9        & 9        & 6        & 9        & 7        & --       \\
 \end{center}
 Suppose that the link between C and E fails. Assuming no count-to-infinity problems, show the series of updates that will eventually reconnect the nodes, along with the cost of the new path between C and E. You don't need to show every table swap---just focus on the updates pertaining to the failed link.
 \begin{solution}[5in]
+	Updates Happening:
+	\begin{enumerate}
+		\item C $\rightarrow$ E changes to $\infty$
+		\item E $\rightarrow$ C changes to $\infty$
+		\item A $\rightarrow$ E changes to $\infty$
+		\item E $\rightarrow$ A changes to $\infty$
+		\item F $\rightarrow$ E changes to $\infty$
+		\item E $\rightarrow$ F changes to $\infty$
+		
+		\item Begin restructuring as D shows a 2 unit connection to E.
+		
+		\item A $\rightarrow$ E changes to $10$
+		\item E $\rightarrow$ A changes to $10$
+		\item C $\rightarrow$ E changes to $13$
+		\item E $\rightarrow$ C changes to $13$
+		\item F $\rightarrow$ E changes to $19$
+		\item E $\rightarrow$ F changes to $19$
+	\end{enumerate}
+
+\begin{table}[H]
+	\centering
+	\caption{Step 0 part A}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D   & E          & F   \\ \hline
+		A    & -   & 6   & 3          & 6   & 4          & 9   \\
+		B    & 6   & -   & 3          & 4   & 2          & 9   \\
+		C    & 3   & 3   & -          & 3   & 1   & 6   \\
+		D    & 6   & 4   & 3          & -   & 2          & 9   \\
+		E    & 4   & 2   & $\infty$   & 2   & -          & 7   \\
+		F    & 9   & 9   & 6          & 9   & 7          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Step 0 part B}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D   & E          & F   \\ \hline
+		A    & -   & 6   & 3          & 6   & 4          & 9   \\
+		B    & 6   & -   & 3          & 4   & 2          & 9   \\
+		C    & 3   & 3   & -          & 3   & $\infty$   & 6   \\
+		D    & 6   & 4   & 3          & -   & 2          & 9   \\
+		E    & 4   & 2   & $\infty$   & 2   & -          & 7   \\
+		F    & 9   & 9   & 6          & 9   & 7          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 1  part A}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+	   		 & A   & B   & C       & D     & E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & 4          & 9   \\
+		B    & 6   & -   & 3          & 4   & 2          & 9   \\
+		C    & 3   & 3   & -          & 3   & $\infty$   & 6   \\
+		D    & 6   & 4   & 3          & -   & 2          & 9   \\
+		E    & $\infty$   & 2   & $\infty$   & 2   & -          & 7   \\
+		F    & 9   & 9   & 6          & 9   & 7          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 1  part B}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C       & D     & E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & $\infty$          & 9   \\
+		B    & 6   & -   & 3          & 4   & 2          & 9   \\
+		C    & 3   & 3   & -          & 3   & $\infty$   & 6   \\
+		D    & 6   & 4   & 3          & -   & 2          & 9   \\
+		E    & $\infty$   & 2   & $\infty$   & 2   & -          & 7   \\
+		F    & 9   & 9   & 6          & 9   & 7          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 2  part A}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+			 & A   & B   & C       & D     & E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & $\infty$          & 9   \\
+		B    & 6   & -   & 3          & 4   & 2          & 9   \\
+		C    & 3   & 3   & -          & 3   & $\infty$   & 6   \\
+		D    & 6   & 4   & 3          & -   & 2          & 9   \\
+		E    & $\infty$   & 2   & $\infty$   & 2   & -          & 7   \\
+		F    & 9   & 9   & 6          & 9   & $\infty$          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 2  part B}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		     & A   & B   & C          & D     	& E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & $\infty$          & 9   \\
+		B    & 6   & -   & 3          & 4   	& 2          & 9   \\
+		C    & 3   & 3   & -          & 3   	& $\infty$   & 6   \\
+		D    & 6   & 4   & 3          & -   	& 2          & 9   \\
+		E    & $\infty$   & 2   & $\infty$   	& 2   & -          & $\infty$   \\
+		F    & 9   & 9   & 6          & 9   	& $\infty$          & -  \\ \hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 3  part A \\ Begin restructuring as D shows a 2 unit connection to E.}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D     	& E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & 10          & 9   \\
+		B    & 6   & -   & 3          & 4   	& 2          & 9   \\
+		C    & 3   & 3   & -          & 3   	& $\infty$   & 6   \\
+		D    & 6   & 4   & 3          & -   	& 2          & 9   \\
+		E    & $\infty$   & 2   & $\infty$   	& 2   & -          & $\infty$   \\
+		F    & 9   & 9   & 6          & 9   	& $\infty$          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 3  part B}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D     	& E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & 10          & 9   \\
+		B    & 6   & -   & 3          & 4   	& 2          & 9   \\
+		C    & 3   & 3   & -          & 3   	& $\infty$   & 6   \\
+		D    & 6   & 4   & 3          & -   	& 2          & 9   \\
+		E    & 10   & 2   & $\infty$   	& 2   & -          & $\infty$   \\
+		F    & 9   & 9   & 6          & 9   	& $\infty$          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 4  part A}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D     	& E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & 10          & 9   \\
+		B    & 6   & -   & 3          & 4   	& 2          & 9   \\
+		C    & 3   & 3   & -          & 3   	& 13   & 6   \\
+		D    & 6   & 4   & 3          & -   	& 2          & 9   \\
+		E    & 10   & 2   & $\infty$   	& 2   & -          & $\infty$   \\
+		F    & 9   & 9   & 6          & 9   	& $\infty$          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 4  part B}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D     	& E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & 10          & 9   \\
+		B    & 6   & -   & 3          & 4   	& 2          & 9   \\
+		C    & 3   & 3   & -          & 3   	& 13   & 6   \\
+		D    & 6   & 4   & 3          & -   	& 2          & 9   \\
+		E    & 10   & 2   & 13   	& 2   & -          & $\infty$   \\
+		F    & 9   & 9   & 6          & 9   	& $\infty$          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 5  part A}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D     	& E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & 10          & 9   \\
+		B    & 6   & -   & 3          & 4   	& 2          & 9   \\
+		C    & 3   & 3   & -          & 3   	& 13   & 6   \\
+		D    & 6   & 4   & 3          & -   	& 2          & 9   \\
+		E    & 10   & 2   & 13   	& 2   & -          & 19   \\
+		F    & 9   & 9   & 6          & 9   	& $\infty$          & -  \\ \hline
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Question 10: Step 5  part A}
+	\label{Solution 10}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\multicolumn{7}{|c|}{Distance, Next Hop to Reach Node} \\ \hline
+		& A   & B   & C          & D     	& E   & F   				\\ \hline
+		A    & -   & 6   & 3          & 6   & 10          & 9   \\
+		B    & 6   & -   & 3          & 4   	& 2          & 9   \\
+		C    & 3   & 3   & -          & 3   	& 13   & 6   \\
+		D    & 6   & 4   & 3          & -   	& 2          & 9   \\
+		E    & 10   & 2   & 13   	& 2   & -          & 19   \\
+		F    & 9   & 9   & 6          & 9   	& 19          & -  \\ \hline
+	\end{tabular}
+\end{table}
+
+\newpage
+
+\vfill
+
+\bonusquestion \textbf{(bonus)} Typically CIDR address 0.0.0.0/0 is considered invalid. Assume we want to instead implement our software-defined network to support 0.0.0.0/0: should it match every IP address, or no IP address? While there is no correct decision, be sure to \textbf{justify your answer} with a short (sentence of two) reasoning using appropriate terminology.
 \end{solution}
 
 
-\bonusquestion \textbf{(bonus)} Typically CIDR address 0.0.0.0/0 is considered invalid. Assume we want to instead implement our software-defined network to support 0.0.0.0/0: should it match every IP address, or no IP address? While there is no correct decision, be sure to \textbf{justify your answer} with a short (sentence of two) reasoning using appropriate terminology.
-
-
-\end{questions}
 \begin{solution}[1in]
-	I would saw that 0.0.0.0/0 should be valid for all IPV4 addresses.  My reasoning for this is essentially just due to that is how the math itself works out. 
+	I would say that 0.0.0.0/0 should be valid for all IPV4 addresses.  My reasoning for this is essentially just due to that is how the math itself works out. 
 	\begin{center}
 		$\textrm{Addr: }$ 00000000.00000000.00000000.00000000
 		
@@ -377,7 +684,9 @@ Suppose that the link between C and E fails. Assuming no count-to-infinity probl
 		
 		$\textrm{Broadcast: }$ 255.255.255.255
 	\end{center}
+	As another reason that it would make sense, is that it would seem odd to not have a CIDR notation that could cover all potential IP addresses as it would breakup the flow of many charts and data address fields as an "allow all" option would have to be something not in CIDR notation adding extra annoyances.
 \end{solution}
+\end{questions}
 
 \newpage
 \begin{center}\hrulefill\\\textcolor{gray}{Scratch Work}\end{center}
