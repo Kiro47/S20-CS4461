@@ -1,0 +1,100 @@
+\documentclass[12pt,addpoints,answers]{exam}
+\usepackage[utf8]{inputenc}
+
+\unframedsolutions
+\renewcommand{\solutiontitle}{\noindent\textbf{Solution:}\par\noindent}
+\SolutionEmphasis{\color{blue}}
+%\noprintanswers
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{xfrac}
+
+\usepackage{siunitx}
+\sisetup{parse-numbers=false}
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{chains}
+\usetikzlibrary{positioning}
+%\tikzset{>=stealth',every on chain/.append style={join}, every join/.style={-,blue,thick,dashed}}
+
+
+
+\title{Computer Networks Homework 5}
+\author{Spring 2020}
+\date{Due: 20 April 2020}
+
+\begin{document}
+\maketitle
+
+\begin{questions}
+\question[8] In ASCII, the base set of characters are encoded as 7-bit values (with the most significant bit being 0). You can confirm this for yourself by referencing a resource such as \url{asciitable.com}. We can take advantage of this fact when calculating two-dimensional parity. Instead of adding a new bit to represent each row's parity, we instead "borrow" this most significant bit for the partiy calculation.
+
+Calculate the two-dimensional parity for the ASCII string \lstinline[showspaces=true]{MTU 1885}, noting that the string has 8 characters including the space. Encode the row parity for each 7-bit ASCII character in the most significant bit of the string. List the encoded message as a string of bytes in hexidecimal.
+\begin{solution}
+\end{solution}
+
+\question Perform the following operations using carry-free binary. \emph{Please show your work.}
+\begin{parts}
+\part[3] $100111_2 + 011101_2$
+\begin{solution}
+\end{solution}
+
+\part[3] $011110_2 - 111110_2$
+\begin{solution}
+\end{solution}
+
+\part[3] $10010_2 \times 10101_2$
+\begin{solution}
+\end{solution}
+
+\part[3] $1111111_2 + 1111111_2$
+\begin{solution}
+\end{solution}
+\end{parts}
+
+\question[8] Calculate the CRC checksum for the data $100111110011_2$ and the CRC-8 polynomial $x^8 + x^2 + x + 1$.
+\begin{solution}
+\end{solution}
+
+\question Consider the following extended LAN consisting of three hosts (X, Y, and Z) and three learning bridges (B1, B2, B3). Assume that the bridges initially have empty forwarding tables, will fill their forwarding table with the source address from any incoming packet, and will broadcast any packet for which is missing a forwarding entry. Answer the following questions about the hosts and bridges cumulatively, e.g., part (b) occurs after part (a).
+\begin{center}\includegraphics[width=0.35\linewidth]{fig/simple.pdf}\end{center}
+\begin{parts}
+\part[3] Suppose X sends a packet destined for W. Which bridges learn where X is? Does Y's network interface see this packet?
+\begin{solution}
+\end{solution}
+
+\part[3] Suppose Z sends a packet destined for X. Which bridges learn where Z is? Does Y's network interface see this packet?
+\begin{solution}
+\end{solution}
+
+\part[3] Suppose Y sends a packet destined for X. Which bridges learn where Y is? Does Z's network interface see this packet?
+\begin{solution}
+\end{solution}
+
+\part[3] Suppose W sends a packet destined for Y. Which bridges learn where W is? Does Z's network interface see this packet?
+\begin{solution}
+\end{solution}
+\end{parts}
+
+\question The following extended LAN has just come back online after a power outage and the bridges now need to agree on a spanning tree for propagating Ethernet frames
+\begin{center}\includegraphics[width=0.45\linewidth]{fig/complex.pdf}\end{center}
+\begin{parts}
+\part[3] Indicate the category of each port (root, designated, blocked) for every bridge. As a human, you do not need to run the distributed spanning tree protocol exactly---just provide the end result based on the rules and preferences of the algorithm.
+\begin{solution}
+\end{solution}
+
+\part[7] Some time after establishing the spanning tree from part (a), bridge B2 suffers a catastrophic failure. Indicate the category of each port (root, designated, blocked) after the recovery process and a new spanning tree has been formed.
+\begin{solution}
+\end{solution}
+\end{parts}
+
+
+\end{questions}
+\end{document}
