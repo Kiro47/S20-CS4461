@@ -1,1 +1,9 @@
 notes
+*.aux
+*.log
+*.out
+*.pickle
+*.pyplog
+*.pyptex
+*.synctex.gz
+*.zip
